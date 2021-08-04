@@ -6,52 +6,51 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
-#define SIZE 1
 
-int StringListSize(char **list){
-    int size=(sizeof(list)/sizeof (char*));
-    return size;
+static int StringCount;
+
+int StringListSize(){
+    return StringCount;
 }
 
 void SwapStrings(char** list,int string1,int string2){
-    char* temp=nullptr;
-    temp=list[string1];
-    list[string1]=list[string2];
-    list[string2]=temp;
-    /*temp= (char*)malloc(strlen(list[string1])+1);
- strcpy(temp,list[string1]);
- list[string1]=(char*)realloc(list[string1], strlen(list[string2])+1);
- strcpy(list[string1],list[string2]);
- strcpy(list[string2],temp);*/
+    char* temp= (char*)malloc(strlen(list[string1])+1);
+
+    strcpy(temp,list[string1]);
+    /*list[string1]=(char*)realloc(list[string1], strlen(list[string2])+1);*/
+    strcpy(list[string1],list[string2]);
+    strcpy(list[string2],temp);
 }
 
 void StringListInit(char ***list){
-    (*list)= (char **)malloc(1);
+    (*list)= (char **) malloc(sizeof(char*)) ;
     (*list)[0]=nullptr;
+    StringCount= 0;
 }
 
 void StringListAdd(char** list, char* buffer){
-    if (list[0]== nullptr){
+    if (StringCount==0){
         list[0]= (char*)malloc(strlen(buffer)+1);
         strcpy(list[0],buffer);
     } else {
-        list= (char**)realloc(list,sizeof(char*)*(StringListSize(list)+1));
-        list[StringListSize(list)]=(char*)malloc(strlen(buffer)+1);
-        strcpy(list[StringListSize(list)],buffer);
+        list= (char**)realloc(list,StringCount+1);
+        list[StringCount]=(char*)malloc(strlen(buffer)+1);
+        strcpy(list[StringCount],buffer);
     }
+    StringCount++;
 }
 
 void DeleteString(char** list, int StringNumber){
-    SwapStrings(list, StringNumber, StringListSize(list));
-    list= (char**)realloc(list, StringListSize(list)-1);
+    SwapStrings(list, StringNumber, StringCount);
+    list= (char**)realloc(list, StringCount-1);
     free(list[StringNumber]);
     strcpy(list[StringNumber]," ");
-
+StringCount--;
 }
 
 
 int FindString(char** list, char* CompareString){
-    for (int i = 0; i < StringListSize(list); ++i) {
+    for (int i = 0; i < StringCount; ++i) {
         if(!strcmp(list[i],CompareString)){
             return i;
         }
@@ -61,21 +60,22 @@ int FindString(char** list, char* CompareString){
 
 void ShowList(char **list){
     std::cout<<"\n\t THE LIST IS ->\n";
-    for (int i = 0; i < StringListSize(list); ++i) {
-        puts(list[i]);
+    for (int i = 0; i < StringCount; ++i) {
+        printf("%s \n",list[i]);
     }
 }
 
 void StringListDestroy(char*** list){
-    for (int i = StringListSize(*list); i >= 0; --i) {
+    for (int i = StringCount; i >= 0; --i) {
         free(*list[i]);
     }
     free(list);
+    StringCount=0;
 }
 
 void StringListRemoveDuplicates(char** list){
-    for (int i = 0; i < StringListSize(list); ++i) {
-        for (int j = i+1; j < StringListSize(list); ++j) {
+    for (int i = 0; i < StringCount; ++i) {
+        for (int j = i+1; j < StringCount; ++j) {
             if (!strcmp(list[i],list[j])){
                 DeleteString(list,j);
             }
@@ -84,7 +84,7 @@ void StringListRemoveDuplicates(char** list){
 }
 
 void StringListReplaceInStrings(char** list, char* before, char* after){
-    for (int i = 0; i < StringListSize(list); ++i){
+    for (int i = 0; i < StringCount; ++i){
         if(!strcmp(list[i],before)){
             strcpy(list[i],after);
         }
@@ -98,5 +98,5 @@ static int myCompare(const void* string1, const void* string2)
 }
 
 void StringListSort(char** list){
-    qsort(list, StringListSize(list), sizeof(const char*), myCompare);
+    qsort(list, StringCount, sizeof(const char*), myCompare);
 }

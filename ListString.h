@@ -5,7 +5,7 @@
 #ifndef TASK_1_LISTSTRING_H
 #define TASK_1_LISTSTRING_H
 
-int StringListSize(char **list);
+int StringListSize();
 
 void SwapStrings(char** list,int string1,int string2);
 
