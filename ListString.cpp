@@ -23,8 +23,7 @@ void SwapStrings(char** list,int string1,int string2){
 }
 
 void StringListInit(char ***list){
-    (*list)= (char **) malloc(sizeof(char*)) ;
-    (*list)[0]=nullptr;
+    (*list)= (char **) calloc(1,sizeof(char*)) ;
     StringCount= 0;
 }
 
@@ -34,7 +33,7 @@ void StringListAdd(char** list, char* buffer){
         strcpy(list[0],buffer);
         StringCount++;
     } else {
-        list= (char**)realloc(list,StringCount+2);
+        list= (char**)realloc(list, StringCount+2);
         list[StringCount]=(char*)malloc(strlen(buffer)+1);
         strcpy(list[StringCount],buffer);
         StringCount++;
@@ -44,10 +43,10 @@ void StringListAdd(char** list, char* buffer){
 
 void DeleteString(char** list, int StringNumber){
     std::swap(list[StringNumber],list[StringCount]);
-    list= (char**)realloc(list, StringCount-1);
+    list= (char**)realloc(list, sizeof(char*)*(--StringCount));
     free(list[StringNumber]);
     strcpy(list[StringNumber]," ");
-StringCount--;
+
 }
 
 
