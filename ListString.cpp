@@ -32,16 +32,18 @@ void StringListAdd(char** list, char* buffer){
     if (StringCount==0){
         list[0]= (char*)malloc(strlen(buffer)+1);
         strcpy(list[0],buffer);
+        StringCount++;
     } else {
-        list= (char**)realloc(list,StringCount+1);
+        list= (char**)realloc(list,StringCount+2);
         list[StringCount]=(char*)malloc(strlen(buffer)+1);
         strcpy(list[StringCount],buffer);
+        StringCount++;
     }
-    StringCount++;
+
 }
 
 void DeleteString(char** list, int StringNumber){
-    SwapStrings(list, StringNumber, StringCount);
+    std::swap(list[StringNumber],list[StringCount]);
     list= (char**)realloc(list, StringCount-1);
     free(list[StringNumber]);
     strcpy(list[StringNumber]," ");
