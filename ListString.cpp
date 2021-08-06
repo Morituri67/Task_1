@@ -8,32 +8,40 @@
 #include <iostream>
 
 static int StringCount;
+static int ListCapacity;
 
 int StringListSize(){
     return StringCount;
 }
 
-void SwapStrings(char** list,int string1,int string2){
-    char* temp= (char*)malloc(strlen(list[string1])+1);
+void SwapStrings(char** string1,char** string2){
+    char* temp;
+    temp=*string1;
+    *string1=*string2;
+    *string2=temp;
 
-    strcpy(temp,list[string1]);
-    /*list[string1]=(char*)realloc(list[string1], strlen(list[string2])+1);*/
-    strcpy(list[string1],list[string2]);
-    strcpy(list[string2],temp);
+    /*char temp[strlen(*string1)+1];
+    strcpy(temp,*string1);
+    *//*list[string1]=(char*)realloc(list[string1], strlen(list[string2])+1);*//*
+    strcpy(*string1,*string2);
+    strcpy(*string2,temp);*/
 }
 
 void StringListInit(char ***list){
-    (*list)= (char **) calloc(1,sizeof(char*)) ;
+    ListCapacity= 8;
+    (*list)= (char **) calloc(ListCapacity,sizeof(char*)) ;
     StringCount= 0;
+
 }
 
 void StringListAdd(char** list, char* buffer){
-    if (StringCount==0){
-        list[0]= (char*)malloc(strlen(buffer)+1);
-        strcpy(list[0],buffer);
+    if (StringCount<ListCapacity){
+        list[StringCount]= (char*)malloc(strlen(buffer)+1);
+        strcpy(list[StringCount],buffer);
         StringCount++;
     } else {
-        list= (char**)realloc(list, StringCount+2);
+        ListCapacity*=2;
+        list= (char**)realloc(list, sizeof(char*)*ListCapacity);
         list[StringCount]=(char*)malloc(strlen(buffer)+1);
         strcpy(list[StringCount],buffer);
         StringCount++;
@@ -42,11 +50,15 @@ void StringListAdd(char** list, char* buffer){
 }
 
 void DeleteString(char** list, int StringNumber){
-    std::swap(list[StringNumber],list[StringCount]);
-    list= (char**)realloc(list, sizeof(char*)*(--StringCount));
-    free(list[StringNumber]);
-    strcpy(list[StringNumber]," ");
+    if (StringNumber!=StringCount-1){
+        SwapStrings(&list[StringNumber],&list[StringCount-1]);
+    }
 
+    ListCapacity=StringCount;
+    list= (char**)realloc(list, sizeof(char*)*ListCapacity);
+    free(list[StringCount-1]);
+
+    StringCount--;
 }
 
 
@@ -62,16 +74,18 @@ int FindString(char** list, char* CompareString){
 void ShowList(char **list){
     std::cout<<"\n\t THE LIST IS ->\n";
     for (int i = 0; i < StringCount; ++i) {
-        printf("%s \n",list[i]);
+        puts(list[i]);
     }
 }
 
 void StringListDestroy(char*** list){
-    for (int i = StringCount; i >= 0; --i) {
-        free(*list[i]);
+
+    for (int i = 0; i < StringCount; ++i) {
+        free((*list)[i]);
     }
-    free(list);
+    free((*list));
     StringCount=0;
+
 }
 
 void StringListRemoveDuplicates(char** list){
