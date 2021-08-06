@@ -4,7 +4,7 @@
 
 int main() {
     char **list;
-
+    std::cout<<"\n\t Enter 5 strings\n";
     StringListInit(&list);
     char buffer[30];
 
