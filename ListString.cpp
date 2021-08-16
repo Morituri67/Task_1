@@ -19,12 +19,6 @@ void SwapStrings(char** string1,char** string2){
     temp=*string1;
     *string1=*string2;
     *string2=temp;
-
-    /*char temp[strlen(*string1)+1];
-    strcpy(temp,*string1);
-    *//*list[string1]=(char*)realloc(list[string1], strlen(list[string2])+1);*//*
-    strcpy(*string1,*string2);
-    strcpy(*string2,temp);*/
 }
 
 void StringListInit(char ***list){
